@@ -1,0 +1,11 @@
+# Chrono build files #
+######################
+chrono/
+
+# Build files #
+###############
+build/
+
+# Libraries #
+#############
+libraries/
