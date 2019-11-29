@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     // Easy shortcuts to add camera, lights, logo and sky in Irrlicht scene:
     application.AddTypicalLogo();
-    application.AddTypicalSky();
+    //application.AddTypicalSky();
     application.AddTypicalLights();
     application.AddTypicalCamera(core::vector3df(2, 2, -5),
                                  core::vector3df(0, 1, 0));  // to change the position of camera
@@ -56,9 +56,10 @@ int main(int argc, char* argv[]) {
 
     //======================================================================
 
-    // HERE YOU CAN POPULATE THE PHYSICAL SYSTEM WITH BODIES AND LINKS.
-    //
-    // An example: a pendulum.
+    // The gripper model comes from the Robotiq Two-Finger 85 Model.
+	// This mechanism consists of 9 links supported by 8 joints
+	// The geometry is defined below and was taken derived based on the following:
+	// https://github.com/a-price/robotiq_arg85_description/blob/master/robots/robotiq_arg85_description.URDF
 
     // 1-Create a floor that is fixed (that is used also to represent the absolute reference)
 
@@ -72,8 +73,32 @@ int main(int argc, char* argv[]) {
 
     mphysicalSystem.Add(floorBody);
 
-    // 2-Create a pendulum
+	//////////////////////////////////////////////////
+	///       DEFINES THE GRIPPER GEOMETRY         ///
+	//////////////////////////////////////////////////
 
+	auto gripperBase = std::make_shared<ChBodyEasyBox>(0.8, 0.5, 0.3,3000,false, true);
+	gripperBase->SetPos(ChVector<>(0, 2, -2));
+	gripperBase->SetBodyFixed(true);
+	auto gripper_marker_one = std::make_shared<ChMarker>();
+	gripperBase->AddMarker(gripper_marker_one);
+
+
+	auto leftInnerKnuckle = std::make_shared<ChBodyEasyBox>(0.4, 0.1, 0.1, 3000, false, true);
+	leftInnerKnuckle->SetPos(ChVector<>(0, 2.5, -2));
+	auto left_knuckle_marker = std::make_shared<ChMarker>();
+	leftInnerKnuckle->AddMarker(left_knuckle_marker);
+
+
+	mphysicalSystem.Add(gripperBase);
+	mphysicalSystem.Add(leftInnerKnuckle);
+
+	auto joint1 = std::make_shared<ChLinkLockRevolute>();
+	joint1->Initialize(gripper_marker_one, left_knuckle_marker);
+	mphysicalSystem.Add(joint1);
+
+
+    // 2-Create a pendulum
     auto pendulumBody = std::make_shared<ChBodyEasyBox>(0.5, 2, 0.5,  // x, y, z dimensions
                                                         3000,         // density
                                                         false,        // no contact geometry
@@ -99,15 +124,21 @@ int main(int argc, char* argv[]) {
 
     mphysicalSystem.Add(sphericalLink);
 
-    // Optionally, attach a RGB color asset to the floor, for better visualization
+    // Floor Color for Irrichlet Simulation
     auto color = std::make_shared<ChColorAsset>();
-    color->SetColor(ChColor(0.2f, 0.25f, 0.25f));
+    color->SetColor(ChColor(0.3f, 0.3f, 0.3f));
     floorBody->AddAsset(color);
 
     // Optionally, attach a texture to the pendulum, for better visualization
     auto texture = std::make_shared<ChTexture>();
     texture->SetTextureFilename(GetChronoDataFile("cubetexture_bluwhite.png"));  // texture in ../data
     pendulumBody->AddAsset(texture);
+
+
+	// Gripper Colors
+	auto gripper_gray = std::make_shared<ChColorAsset>();
+	color->SetColor(ChColor(0.1f, 0.1f, 0.1f));
+	gripperBase->AddAsset(gripper_gray);
 
     //======================================================================
 
