@@ -100,9 +100,14 @@ int main(int argc, char* argv[]) {
 	marker_gripperBase->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0127000000001501, 0, 0.0693074999999639), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	gripperBase->AddMarker(marker_gripperBase);
 
+	auto marker_gripperBaseRight = std::make_shared<ChMarker>();
+	marker_gripperBaseRight->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(-0.0127000000001501, 0, 0.0693074999999639), Q_from_AngAxis(CH_C_PI_2, VECT_X)));
+	gripperBase->AddMarker(marker_gripperBaseRight);
+
 
 	auto point = std::make_shared<ChBodyEasySphere>(0.005,1000,true,true);
-	point->SetPos(ChVector<>(0.062, 0.02, 0.104));
+	point->SetPos(ChVector<>(-0.065, 0.01, 0.109));
+	//point->SetPos(ChVector<>(0, 0, 0));
 	point->SetBodyFixed(true);
 	mphysicalSystem.AddBody(point);
 
@@ -112,11 +117,10 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	auto leftOuterKnuckle = std::make_shared<ChBody>();
 	leftOuterKnuckle->SetPos(ChVector<>(0.0306011444260539, 0, 0.0627920162695395));
+	leftOuterKnuckle->SetBodyFixed(true);
 	leftOuterKnuckle->SetMass(0.00684838849434396);
 	leftOuterKnuckle->SetInertia(ChMatrix33<>(ChVector<>(2.66832029033166E-07, 1.3889233257419E-06, 1.26603336914415E-06),
 		ChVector<>(1.66142314639824E-15, 1.45945633322873E-07, 2.82951161241588E-15)));
-	//wheelB->SetRot(chrono::Q_from_AngAxis(CH_C_PI, VECT_Y));  // reuse RF wheel shape, flipped
-	// NEED TO SET COLLISION
 
 	auto leftOuterKnuckle_mesh = chrono_types::make_shared<ChObjShapeFile>();
 	leftOuterKnuckle_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/outer_knuckle_fine.obj"));
@@ -127,6 +131,25 @@ int main(int argc, char* argv[]) {
 	marker_leftOuterKnuckle->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0316910442266543, 0, -0.001933963757246050), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftOuterKnuckle->AddMarker(marker_leftOuterKnuckle);
 	
+	//////////////////////////
+	//  Right Outer Knuckle  //
+	//////////////////////////
+	auto rightOuterKnuckle = std::make_shared<ChBody>();
+	rightOuterKnuckle->SetPos(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395));
+	rightOuterKnuckle->SetRot(ChQuaternion<>(0, 0, 0, 1));
+	//rightOuterKnuckle->SetBodyFixed(true);
+	rightOuterKnuckle->SetMass(0.00684838849434396);
+	rightOuterKnuckle->SetInertia(ChMatrix33<>(ChVector<>(2.66832029033166E-07, 1.3889233257419E-06, 1.26603336914415E-06),
+		ChVector<>(1.66142314639824E-15, 1.45945633322873E-07, 2.82951161241588E-15)));
+
+	auto rightOuterKnuckle_mesh = chrono_types::make_shared<ChObjShapeFile>();
+	rightOuterKnuckle_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/outer_knuckle_fine.obj"));
+	rightOuterKnuckle->AddAsset(rightOuterKnuckle_mesh);
+	mphysicalSystem.AddBody(rightOuterKnuckle);
+
+	auto marker_rightOuterKnuckle = std::make_shared<ChMarker>();
+	marker_rightOuterKnuckle->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0316910442266543, 0, -0.001933963757246050), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightOuterKnuckle->AddMarker(marker_rightOuterKnuckle);
 
 	//////////////////////////
 	//  Left Inner Knuckle  //
@@ -141,7 +164,6 @@ int main(int argc, char* argv[]) {
 	auto leftInnerKnuckle_mesh = chrono_types::make_shared<ChObjShapeFile>();
 	leftInnerKnuckle_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/inner_knuckle_fine.obj"));
 	leftInnerKnuckle->AddAsset(leftInnerKnuckle_mesh);
-	//leftInnerKnuckle->SetBodyFixed(true);
 	mphysicalSystem.AddBody(leftInnerKnuckle);
 
 	auto marker_leftInnerKnuckle = std::make_shared<ChMarker>();
@@ -155,6 +177,35 @@ int main(int argc, char* argv[]) {
 	auto marker_leftInnerKnuckle_finger = std::make_shared<ChMarker>();
 	marker_leftInnerKnuckle_finger->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.034585310861294, 0, 0.0454970193817975), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftInnerKnuckle->AddMarker(marker_leftInnerKnuckle_finger);
+
+	//////////////////////////
+	//  Right Inner Knuckle  //
+	//////////////////////////
+	auto rightInnerKnuckle = std::make_shared<ChBody>();
+	rightInnerKnuckle->SetPos(ChVector<>(-0.0127000000001501, 0, 0.0693074999999639));
+	rightInnerKnuckle->SetRot(ChQuaternion<>(0, 0, 0, 1));
+	//rightInnerKnuckle->SetBodyFixed(true);
+	rightInnerKnuckle->SetMass(0.0110930853895903);
+	rightInnerKnuckle->SetInertia(ChMatrix33<>(ChVector<>(4.23392770691541E-06, 3.96548790524392E-06, 3.24068002883007E-06),
+		ChVector<>(5.748978936968E-15, 1.78855677119788E-06, 1.05464666369669E-14)));
+
+
+	auto rightInnerKnuckle_mesh = chrono_types::make_shared<ChObjShapeFile>();
+	rightInnerKnuckle_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/inner_knuckle_fine.obj"));
+	rightInnerKnuckle->AddAsset(rightInnerKnuckle_mesh);
+	mphysicalSystem.AddBody(rightInnerKnuckle);
+
+	auto marker_rightInnerKnuckle = std::make_shared<ChMarker>();
+	marker_rightInnerKnuckle->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightInnerKnuckle->AddMarker(marker_rightInnerKnuckle);
+
+	auto joint1right = std::make_shared<ChLinkLockRevolute>();
+	joint1right->Initialize(marker_gripperBaseRight, marker_rightInnerKnuckle);
+	mphysicalSystem.Add(joint1right);
+
+	auto marker_rightInnerKnuckle_finger = std::make_shared<ChMarker>();
+	marker_rightInnerKnuckle_finger->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.034585310861294, 0, 0.0454970193817975), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightInnerKnuckle->AddMarker(marker_rightInnerKnuckle_finger);
 
 	//////////////////////////
 	//  Left Outer Finger   //
@@ -183,6 +234,36 @@ int main(int argc, char* argv[]) {
 	auto marker_leftOuterFinger_Assumed = std::make_shared<ChMarker>();
 	marker_leftOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0.0431), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftOuterFinger->AddMarker(marker_leftOuterFinger_Assumed);
+
+	//////////////////////////
+	//  Right Outer Finger   //
+	//////////////////////////
+	auto rightOuterFinger = std::make_shared<ChBody>();
+	rightOuterFinger->SetPos(ChVector<>(-0.0316910442266543 - 0.0306011444260539, 0, -0.001933963757246050 + .0627920162695395));
+	rightOuterFinger->SetRot(ChQuaternion<>(0, 0, 0, 1));
+	rightOuterFinger->SetMass(0.0273093985570947);
+	rightOuterFinger->SetInertia(ChMatrix33<>(ChVector<>(8.51629628283022E-06, 6.9133328065108E-06, 2.25006832221981E-06),
+		ChVector<>(2.58174336207405E-19, 3.83829504344079E-07, -7.58589926143789E-19)));
+
+
+	auto rightOuterFinger_mesh = chrono_types::make_shared<ChObjShapeFile>();
+	rightOuterFinger_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/outer_finger_fine.obj"));
+	rightOuterFinger->AddAsset(rightOuterFinger_mesh);
+	//rightOuterFinger->SetBodyFixed(true);
+	mphysicalSystem.AddBody(rightOuterFinger);
+
+	auto marker_rightOuterFinger = std::make_shared<ChMarker>();
+	marker_rightOuterFinger->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightOuterFinger->AddMarker(marker_rightOuterFinger);
+
+	auto joint2right = std::make_shared<ChLinkLockRevolute>();
+	joint2right->Initialize(marker_rightOuterKnuckle, marker_rightOuterFinger);
+	mphysicalSystem.Add(joint2right);
+
+	auto marker_rightOuterFinger_Assumed = std::make_shared<ChMarker>();
+	marker_rightOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0648-.06229, 0, 0.105-0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	//marker_rightOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0.104-0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightOuterFinger->AddMarker(marker_rightOuterFinger_Assumed);
 
 	//////////////////////////
 	//  Left Inner Finger   //
@@ -218,6 +299,40 @@ int main(int argc, char* argv[]) {
 	mphysicalSystem.Add(joint4); 
 
 	//////////////////////////
+	//  Right Inner Finger   //
+	//////////////////////////
+	auto rightInnerFinger = std::make_shared<ChBody>();
+	rightInnerFinger->SetPos(ChVector<>(-0.034585310861294 - 0.0127000000001501, 0, 0.0454970193817975 + 0.0693074999999639));
+	rightInnerFinger->SetRot(ChQuaternion<>(0, 0, 0, 1));
+	rightInnerFinger->SetMass(0.00724255346165745);
+	rightInnerFinger->SetInertia(ChMatrix33<>(ChVector<>(1.47824274053603E-06, 1.70064480838395E-06, 4.77151336838364E-07),
+		ChVector<>(-3.94884463570303E-19, -3.45268847648622E-07, 4.77151336838364E-07)));
+
+	auto rightInnerFinger_mesh = chrono_types::make_shared<ChObjShapeFile>();
+	rightInnerFinger_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/inner_finger_fine.obj"));
+	rightInnerFinger->AddAsset(rightInnerFinger_mesh);
+	//rightInnerFinger->SetBodyFixed(true);
+	mphysicalSystem.AddBody(rightInnerFinger);
+
+	auto marker_rightInnerFinger = std::make_shared<ChMarker>();
+	marker_rightInnerFinger->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightInnerFinger->AddMarker(marker_rightInnerFinger);
+
+	auto joint3right = std::make_shared<ChLinkLockRevolute>();
+	joint3right->Initialize(marker_rightInnerKnuckle_finger, marker_rightInnerFinger);
+	mphysicalSystem.Add(joint3right);
+
+	////// 
+
+	auto marker_rightInnerFinger_Assumed = std::make_shared<ChMarker>();
+	marker_rightInnerFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0648-0.04728, 0, 0.105-0.11479), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	rightInnerFinger->AddMarker(marker_rightInnerFinger_Assumed);
+
+	auto joint4right = std::make_shared<ChLinkLockRevolute>();
+	joint4right->Initialize(marker_rightOuterFinger_Assumed, marker_rightInnerFinger_Assumed);
+	mphysicalSystem.Add(joint4right);
+
+	//////////////////////////
 	//     Left Motor       //
 	//////////////////////////
 
@@ -227,25 +342,23 @@ int main(int argc, char* argv[]) {
 	//left_motor->SetMotorFunction(ChFunction<>())
 	
 	mphysicalSystem.AddLink(left_motor);
-	auto my_speed_function = chrono_types::make_shared<ChFunction_Const>(0.25);  // speed w=3.145 rad/sec CH_C_PI/2
-	left_motor->SetSpeedFunction(my_speed_function);
+	auto left_speed_function = chrono_types::make_shared<ChFunction_Const>(0.1);  // speed w=3.145 rad/sec CH_C_PI/2
+	left_motor->SetSpeedFunction(left_speed_function);
 
-	//auto joint1 = std::make_shared<ChLinkLockRevolute>();
-	//joint1->Initialize(gripper_marker_one, left_knuckle_marker);
-	//mphysicalSystem.Add(joint1);
+	//////////////////////////
+	//     Right Motor       //
+	//////////////////////////
 
-	//auto joint1 =
-	//	std::make_shared<ChLinkMateGeneric>(true, true, true, true, true, false);  // x,y,z,Rx,Ry,Rz constrains
-	//ChFrame<> joint_one_start(ChVector<>(0, 2, 0));
+	auto right_motor = chrono_types::make_shared<ChLinkMotorRotationSpeed>();
+	right_motor->Initialize(gripperBase, rightOuterKnuckle, ChFrame<>(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395), Q_from_AngAxis(-CH_C_PI_2, VECT_X))); //
+	right_motor->SetName("RotationalMotor");
+	//left_motor->SetMotorFunction(ChFunction<>())
 
-	//joint1->Initialize(gripperBase,        // the 1st body to connect
-	//	leftInnerKnuckle,           // the 2nd body to connect
-	//	false,               // the two following frames are in absolute, not relative, coords.
-	//	joint_one_start,   // the link reference attached to 1st body
-	//	joint_one_start);  // the link reference attached to 2nd body
+	mphysicalSystem.AddLink(right_motor);
+	auto right_speed_function = chrono_types::make_shared<ChFunction_Const>(-0.1);  // speed w=3.145 rad/sec CH_C_PI/2
+	right_motor->SetSpeedFunction(right_speed_function);
 
-	//mphysicalSystem.Add(joint1);
-	//leftInnerKnuckle->SetPos_dt(ChVector<>(0.01, 0, 0));
+
 
     // Floor Color for Irrichlet Simulation
     auto color = std::make_shared<ChColorAsset>();
