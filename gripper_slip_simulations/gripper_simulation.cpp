@@ -19,6 +19,7 @@
 #include "chrono/assets/ChTexture.h"
 #include "chrono/assets/ChColorAsset.h"
 #include "chrono_irrlicht/ChIrrApp.h"
+#include "chrono/physics/ChLinkMotorRotationAngle.h"
 #include "chrono/physics/ChLinkMotorRotationSpeed.h"
 
 
@@ -96,6 +97,7 @@ int main(int argc, char* argv[]) {
 	gripperBase->AddAsset(gripperBase_mesh);
 	gripperBase->SetBodyFixed(true);
 	mphysicalSystem.AddBody(gripperBase);
+
 	auto marker_gripperBase = std::make_shared<ChMarker>();
 	marker_gripperBase->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0127000000001501, 0, 0.0693074999999639), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	gripperBase->AddMarker(marker_gripperBase);
@@ -105,8 +107,12 @@ int main(int argc, char* argv[]) {
 	gripperBase->AddMarker(marker_gripperBaseRight);
 
 
-	auto point = std::make_shared<ChBodyEasySphere>(0.005,1000,true,true);
-	point->SetPos(ChVector<>(-0.065, 0.01, 0.109));
+	auto point = std::make_shared<ChBodyEasySphere>(0.002,1000,true,true);
+	//double val1 = 0.0652;
+	double val1 = 0.0652;
+	//double val2 = 0.1086;
+	double val2 = 0.1086;
+	point->SetPos(ChVector<>(-val1, 0.015, val2));
 	//point->SetPos(ChVector<>(0, 0, 0));
 	point->SetBodyFixed(true);
 	mphysicalSystem.AddBody(point);
@@ -117,7 +123,6 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	auto leftOuterKnuckle = std::make_shared<ChBody>();
 	leftOuterKnuckle->SetPos(ChVector<>(0.0306011444260539, 0, 0.0627920162695395));
-	leftOuterKnuckle->SetBodyFixed(true);
 	leftOuterKnuckle->SetMass(0.00684838849434396);
 	leftOuterKnuckle->SetInertia(ChMatrix33<>(ChVector<>(2.66832029033166E-07, 1.3889233257419E-06, 1.26603336914415E-06),
 		ChVector<>(1.66142314639824E-15, 1.45945633322873E-07, 2.82951161241588E-15)));
@@ -137,7 +142,6 @@ int main(int argc, char* argv[]) {
 	auto rightOuterKnuckle = std::make_shared<ChBody>();
 	rightOuterKnuckle->SetPos(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395));
 	rightOuterKnuckle->SetRot(ChQuaternion<>(0, 0, 0, 1));
-	//rightOuterKnuckle->SetBodyFixed(true);
 	rightOuterKnuckle->SetMass(0.00684838849434396);
 	rightOuterKnuckle->SetInertia(ChMatrix33<>(ChVector<>(2.66832029033166E-07, 1.3889233257419E-06, 1.26603336914415E-06),
 		ChVector<>(1.66142314639824E-15, 1.45945633322873E-07, 2.82951161241588E-15)));
@@ -151,6 +155,7 @@ int main(int argc, char* argv[]) {
 	marker_rightOuterKnuckle->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0316910442266543, 0, -0.001933963757246050), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	rightOuterKnuckle->AddMarker(marker_rightOuterKnuckle);
 
+	
 	//////////////////////////
 	//  Left Inner Knuckle  //
 	//////////////////////////
@@ -232,7 +237,7 @@ int main(int argc, char* argv[]) {
 	mphysicalSystem.Add(joint2);
 
 	auto marker_leftOuterFinger_Assumed = std::make_shared<ChMarker>();
-	marker_leftOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0.0431), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	marker_leftOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(val1 - .06229, 0, val2 - 0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftOuterFinger->AddMarker(marker_leftOuterFinger_Assumed);
 
 	//////////////////////////
@@ -261,7 +266,7 @@ int main(int argc, char* argv[]) {
 	mphysicalSystem.Add(joint2right);
 
 	auto marker_rightOuterFinger_Assumed = std::make_shared<ChMarker>();
-	marker_rightOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0648-.06229, 0, 0.105-0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	marker_rightOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(val1-.06229, 0, val2-0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	//marker_rightOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0.104-0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	rightOuterFinger->AddMarker(marker_rightOuterFinger_Assumed);
 
@@ -288,10 +293,10 @@ int main(int argc, char* argv[]) {
 	joint3->Initialize(marker_leftInnerKnuckle_finger, marker_leftInnerFinger);
 	mphysicalSystem.Add(joint3);
 
-	////// 
+	//////// 
 
 	auto marker_leftInnerFinger_Assumed = std::make_shared<ChMarker>();
-	marker_leftInnerFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.01472, 0, -0.0108), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	marker_leftInnerFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(val1 - 0.04728, 0, val2 - 0.11479), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftInnerFinger->AddMarker(marker_leftInnerFinger_Assumed);
 
 	auto joint4 = std::make_shared<ChLinkLockRevolute>();
@@ -322,43 +327,67 @@ int main(int argc, char* argv[]) {
 	joint3right->Initialize(marker_rightInnerKnuckle_finger, marker_rightInnerFinger);
 	mphysicalSystem.Add(joint3right);
 
-	////// 
+	//////// 
 
 	auto marker_rightInnerFinger_Assumed = std::make_shared<ChMarker>();
-	marker_rightInnerFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0648-0.04728, 0, 0.105-0.11479), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
+	marker_rightInnerFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(val1-0.04728, 0, val2-0.11479), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	rightInnerFinger->AddMarker(marker_rightInnerFinger_Assumed);
 
 	auto joint4right = std::make_shared<ChLinkLockRevolute>();
 	joint4right->Initialize(marker_rightOuterFinger_Assumed, marker_rightInnerFinger_Assumed);
 	mphysicalSystem.Add(joint4right);
 
+
+	//////////////////////////
+	//     DRIVING CODE     //
+	//////////////////////////
+
+	class ChFunction_PartialSine : public ChFunction {
+	// Custom function for kinematics - created with help from the ChFunctions tutorial
+	public:
+		virtual ChFunction_PartialSine* Clone() const override { return new ChFunction_PartialSine(); }
+
+		virtual double Get_y(double x) const override { return abs((CH_C_PI / 6)*sin((4)*x)); }  // just for test: simple cosine
+	};
+
+	auto gripperDriver = std::make_shared<ChFunction_PartialSine>();
+
+
 	//////////////////////////
 	//     Left Motor       //
 	//////////////////////////
 
-	auto left_motor = chrono_types::make_shared<ChLinkMotorRotationSpeed>();
+	auto left_motor = chrono_types::make_shared<ChLinkMotorRotationAngle>();
 	left_motor->Initialize(gripperBase, leftOuterKnuckle, ChFrame<>(ChVector<>(0.0306011444260539, 0, 0.0627920162695395), Q_from_AngAxis(-CH_C_PI_2, VECT_X))); //
 	left_motor->SetName("RotationalMotor");
-	//left_motor->SetMotorFunction(ChFunction<>())
+	left_motor->SetMotorFunction(gripperDriver);
 	
 	mphysicalSystem.AddLink(left_motor);
-	auto left_speed_function = chrono_types::make_shared<ChFunction_Const>(0.1);  // speed w=3.145 rad/sec CH_C_PI/2
-	left_motor->SetSpeedFunction(left_speed_function);
-
+	
 	//////////////////////////
 	//     Right Motor       //
 	//////////////////////////
 
-	auto right_motor = chrono_types::make_shared<ChLinkMotorRotationSpeed>();
-	right_motor->Initialize(gripperBase, rightOuterKnuckle, ChFrame<>(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395), Q_from_AngAxis(-CH_C_PI_2, VECT_X))); //
+	auto right_motor = chrono_types::make_shared<ChLinkMotorRotationAngle>();
+	right_motor->Initialize(gripperBase, rightOuterKnuckle, ChFrame<>(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395), Q_from_AngAxis(CH_C_PI_2, VECT_X))); //
 	right_motor->SetName("RotationalMotor");
-	//left_motor->SetMotorFunction(ChFunction<>())
 
 	mphysicalSystem.AddLink(right_motor);
-	auto right_speed_function = chrono_types::make_shared<ChFunction_Const>(-0.1);  // speed w=3.145 rad/sec CH_C_PI/2
-	right_motor->SetSpeedFunction(right_speed_function);
+	auto right_speed_function = chrono_types::make_shared<ChFunction_Const>(-0.5);  // speed w=3.145 rad/sec CH_C_PI/2
+	right_motor->SetMotorFunction(gripperDriver);
+
+	/////////////////////////////////////////////
+	// Lock the fingers - Uncomment if desired //
+	//leftOuterKnuckle->SetBodyFixed(true);
+	//rightOuterKnuckle->SetBodyFixed(true);
+	/////////////////////////////////////////////
 
 
+
+
+	/////////////////////////////////
+	//     Simulation Settings     //
+	/////////////////////////////////
 
     // Floor Color for Irrichlet Simulation
     auto color = std::make_shared<ChColorAsset>();
@@ -390,8 +419,8 @@ int main(int argc, char* argv[]) {
     application.AssetUpdateAll();
 
     // Adjust some settings:
-    application.SetTimestep(0.005);
-    application.SetTryRealtime(true);
+    application.SetTimestep(0.0002);
+    application.SetTryRealtime(false);
 
     //
     // THE SOFT-REAL-TIME CYCLE
