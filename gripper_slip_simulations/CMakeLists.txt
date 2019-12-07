@@ -125,7 +125,8 @@ endif()
 # files in your project. 
 #--------------------------------------------------------------
 
-add_executable(gripper_simulation gripper_simulation.cpp)
+add_executable(gripper_kinematics gripper_kinematics.cpp)
+add_executatble(gripper_penalty_friction gripper_penalty_friction.cpp)
 
 #--------------------------------------------------------------
 # Set properties for your executable target
@@ -136,16 +137,23 @@ add_executable(gripper_simulation gripper_simulation.cpp)
 # install tree (if using an installed version of Chrono).
 #--------------------------------------------------------------
 
-set_target_properties(gripper_simulation PROPERTIES 
+set_target_properties(gripper_kinematics PROPERTIES 
 	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
 	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
 	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
+
+set_target_properties(gripper_penalty_friction PROPERTIES 
+	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
+	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
+	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
+
 
 #--------------------------------------------------------------
 # Link to Chrono libraries and dependency libraries
 #--------------------------------------------------------------
 
-target_link_libraries(gripper_simulation ${CHRONO_LIBRARIES})
+target_link_libraries(gripper_kinematics ${CHRONO_LIBRARIES})
+target_link_libraries(gripper_penalty_friction ${CHRONO_LIBRARIES})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===
