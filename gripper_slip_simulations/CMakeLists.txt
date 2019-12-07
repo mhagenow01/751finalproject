@@ -126,7 +126,7 @@ endif()
 #--------------------------------------------------------------
 
 add_executable(gripper_kinematics gripper_kinematics.cpp)
-add_executatble(gripper_penalty_friction gripper_penalty_friction.cpp)
+add_executable(gripper_penalty_friction gripper_penalty_friction.cpp)
 
 #--------------------------------------------------------------
 # Set properties for your executable target
