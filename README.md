@@ -4,7 +4,7 @@
 
 placeholder text
 
-![Alt text](/gripper_geometry/gripper_image.png?raw=true "Gripper in Chrono")
+![Example Gripper Simulation Image](/gripper_geometry/gripper_image.PNG?raw=true "Gripper in Chrono")
 
 ## Building the Project
 
