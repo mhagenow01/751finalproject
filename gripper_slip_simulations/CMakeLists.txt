@@ -127,6 +127,7 @@ endif()
 
 add_executable(gripper_kinematics gripper_kinematics.cpp)
 add_executable(gripper_penalty_friction gripper_penalty_friction.cpp)
+add_executable(gripper_complementarity_friction gripper_complementarity_friction.cpp)
 
 #--------------------------------------------------------------
 # Set properties for your executable target
@@ -147,6 +148,11 @@ set_target_properties(gripper_penalty_friction PROPERTIES
 	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
 	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
 
+set_target_properties(gripper_complementarity_friction PROPERTIES 
+	    COMPILE_FLAGS "${CHRONO_CXX_FLAGS} ${EXTRA_COMPILE_FLAGS}"
+	    COMPILE_DEFINITIONS "CHRONO_DATA_DIR=\"${CHRONO_DATA_DIR}\""
+	    LINK_FLAGS "${CHRONO_LINKER_FLAGS}")
+
 
 #--------------------------------------------------------------
 # Link to Chrono libraries and dependency libraries
@@ -154,6 +160,7 @@ set_target_properties(gripper_penalty_friction PROPERTIES
 
 target_link_libraries(gripper_kinematics ${CHRONO_LIBRARIES})
 target_link_libraries(gripper_penalty_friction ${CHRONO_LIBRARIES})
+target_link_libraries(gripper_complementarity_friction ${CHRONO_LIBRARIES})
 
 #--------------------------------------------------------------
 # === 4 (OPTIONAL) ===

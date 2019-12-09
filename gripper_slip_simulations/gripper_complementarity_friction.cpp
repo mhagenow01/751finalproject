@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     SetChronoDataPath(CHRONO_DATA_DIR);
     
     // Create a Chrono physical system
-    ChSystemSMC mphysicalSystem;
+    ChSystemNSC mphysicalSystem;
 	collision::ChCollisionModel::SetDefaultSuggestedEnvelope(0.00001);
 	collision::ChCollisionModel::SetDefaultSuggestedMargin(0.000005);
 
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 	/////////////////////
 	//  Gripper Base   //
 	/////////////////////
-	auto gripperBase = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto gripperBase = std::make_shared<ChBody>();
 	gripperBase->SetPos(ChVector<>(0.0, 0.0, -.09));
 	gripperBase->SetMass(0.30915);
 	gripperBase->SetInertia(ChMatrix33<>(ChVector<>(0.00028972, 0.00030737, 0.00019914), ChVector<>(-5.7879E-10, -1.8543E-06, 1.682E-12)));
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Left Outer Knuckle  //
 	//////////////////////////
-	auto leftOuterKnuckle = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto leftOuterKnuckle = std::make_shared<ChBody>();
 	leftOuterKnuckle->SetPos(ChVector<>(0.0306011444260539, 0, 0.0627920162695395-0.09));
 	leftOuterKnuckle->SetMass(0.00684838849434396);
 	leftOuterKnuckle->SetInertia(ChMatrix33<>(ChVector<>(2.66832029033166E-07, 1.3889233257419E-06, 1.26603336914415E-06),
@@ -132,7 +132,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Right Outer Knuckle  //
 	//////////////////////////
-	auto rightOuterKnuckle = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto rightOuterKnuckle = std::make_shared<ChBody>();
 	rightOuterKnuckle->SetPos(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395-0.09));
 	rightOuterKnuckle->SetRot(ChQuaternion<>(0, 0, 0, 1));
 	rightOuterKnuckle->SetMass(0.00684838849434396);
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Left Inner Knuckle  //
 	//////////////////////////
-	auto leftInnerKnuckle = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto leftInnerKnuckle = std::make_shared<ChBody>();
 	leftInnerKnuckle->SetPos(ChVector<>(0.0127000000001501, 0, 0.0693074999999639-0.09));
 	leftInnerKnuckle->SetMass(0.0110930853895903);
 	leftInnerKnuckle->SetInertia(ChMatrix33<>(ChVector<>(4.23392770691541E-06, 3.96548790524392E-06, 3.24068002883007E-06),
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Right Inner Knuckle  //
 	//////////////////////////
-	auto rightInnerKnuckle = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto rightInnerKnuckle = std::make_shared<ChBody>();
 	rightInnerKnuckle->SetPos(ChVector<>(-0.0127000000001501, 0, 0.0693074999999639-0.09));
 	rightInnerKnuckle->SetRot(ChQuaternion<>(0, 0, 0, 1));
 	//rightInnerKnuckle->SetBodyFixed(true);
@@ -208,7 +208,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Left Outer Finger   //
 	//////////////////////////
-	auto leftOuterFinger = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto leftOuterFinger = std::make_shared<ChBody>();
 	leftOuterFinger->SetPos(ChVector<>(0.0316910442266543+ 0.0306011444260539, 0, -0.001933963757246050+.0627920162695395-0.09));
 	leftOuterFinger->SetMass(0.0273093985570947);
 	leftOuterFinger->SetInertia(ChMatrix33<>(ChVector<>(8.51629628283022E-06, 6.9133328065108E-06, 2.25006832221981E-06),
@@ -236,7 +236,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Right Outer Finger   //
 	//////////////////////////
-	auto rightOuterFinger = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto rightOuterFinger = std::make_shared<ChBody>();
 	rightOuterFinger->SetPos(ChVector<>(-0.0316910442266543 - 0.0306011444260539, 0, -0.001933963757246050 + .0627920162695395-0.09));
 	rightOuterFinger->SetRot(ChQuaternion<>(0, 0, 0, 1));
 	rightOuterFinger->SetMass(0.0273093985570947);
@@ -266,7 +266,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Left Inner Finger   //
 	//////////////////////////
-	auto leftInnerFinger = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto leftInnerFinger = std::make_shared<ChBody>();
 	leftInnerFinger->SetPos(ChVector<>(0.034585310861294+0.0127000000001501, 0, 0.0454970193817975+ 0.0693074999999639-0.09));
 	leftInnerFinger->SetMass(0.00724255346165745);
 	leftInnerFinger->SetInertia(ChMatrix33<>(ChVector<>(1.47824274053603E-06, 1.70064480838395E-06, 4.77151336838364E-07),
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]) {
 	//////////////////////////
 	//  Right Inner Finger   //
 	//////////////////////////
-	auto rightInnerFinger = std::make_shared<ChBody>(ChMaterialSurface::SMC);
+	auto rightInnerFinger = std::make_shared<ChBody>();
 	rightInnerFinger->SetPos(ChVector<>(-0.034585310861294 - 0.0127000000001501, 0, 0.0454970193817975 + 0.0693074999999639-.09));
 	rightInnerFinger->SetRot(ChQuaternion<>(0, 0, 0, 1));
 	rightInnerFinger->SetMass(0.00724255346165745);
@@ -483,7 +483,7 @@ int main(int argc, char* argv[]) {
     application.AssetUpdateAll();
 
     // Adjust some settings:
-    application.SetTimestep(0.00001);
+    application.SetTimestep(0.0001);
     application.SetTryRealtime(false);
 
     //
