@@ -1,7 +1,7 @@
 # Robotiq Gripper Simulations Using Chrono
 
-Author: Mike Hagenow
-ME 751 Final Project
+### Author: Mike Hagenow
+### ME 751 Final Project
 
 ## Project Description
 
