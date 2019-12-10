@@ -29,3 +29,14 @@ Additionally, since the project uses some relative paths, please follow the belo
 
 ## Running the simulations
 Once the files have been build, this repository contains 4 exes that can be run alone that include irrlicht visualization (gripper_kinematics, gripper_friction_test_comp, gripper_complementarity_friction, gripper_penalty_friction).
+
+Note: If you don't want to actually build the files, I have also included a video in the media folder (gripper_simulation_videos.mp4) that shows all four of the simulations.
+
+In order to create the plots in the report, there are bash scripts in the /scripts/ directory that allow you to run the penalty and complementarity methods
+and plot the contact forces from one of the gripper fingers.
+* run_complementarity.bash
+* run_penalty.bash
+These scripts will run the chrono simulation, save the data to a file, and then plot the data in python. It is important these are run from the scripts directory
+as they rely on relative paths.
+
+They also require the following python packages: numpy, matplotlib. I tested using Python 3.7.0 on windows and using the Git Bash terminal (Note: I had to run alias python='winpty python.exe' for the system to recognize the python command).
