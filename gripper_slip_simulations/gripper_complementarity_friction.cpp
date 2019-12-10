@@ -414,7 +414,7 @@ int main(int argc, char* argv[]) {
 	auto cylinderDriver = std::make_shared<ChFunction_CylinderTurner>();
 
 
-	auto slip_grip_torque = std::make_shared<ChFunction_Const>(0.1); // 0.5 Nm (soft grip) -> Gripper can provide maximum of 3 Nm
+	auto slip_grip_torque = std::make_shared<ChFunction_Const>(0.5); // 0.5 Nm (soft grip) -> Gripper can provide maximum of 3 Nm
 
 	///////////////////////////////////
 	//     Left Motor - Torque       //
