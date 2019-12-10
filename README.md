@@ -1,5 +1,8 @@
 # Robotiq Gripper Simulations Using Chrono
 
+Author: Mike Hagenow
+ME 751 Final Project
+
 ## Project Description
 
 This project investigates the use of a linkage-based robotic gripper, particularly as a method to perform tasks involving slip in orientation. Typically, robots
