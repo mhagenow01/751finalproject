@@ -44,23 +44,21 @@ int main(int argc, char* argv[]) {
     
     // Create a Chrono physical system
     ChSystemNSC mphysicalSystem;
-	collision::ChCollisionModel::SetDefaultSuggestedEnvelope(0.00001);
-	collision::ChCollisionModel::SetDefaultSuggestedMargin(0.000005);
+	collision::ChCollisionModel::SetDefaultSuggestedEnvelope(0.001);
+	collision::ChCollisionModel::SetDefaultSuggestedMargin(0.0005);
 
     // Create the Irrlicht visualization (open the Irrlicht device,
     // bind a simple user interface, etc. etc.)
-    ChIrrApp application(&mphysicalSystem, L"Gripper Complementarity Friction Simulation", core::dimension2d<u32>(800, 600),
+    ChIrrApp application(&mphysicalSystem, L"Gripper Complementarity Friction Testing Pushing", core::dimension2d<u32>(800, 600),
                          false);  // screen dimensions
 
     // Easy shortcuts to add camera, lights, logo and sky in Irrlicht scene:
     application.AddTypicalLogo();
     application.AddTypicalSky();
     application.AddTypicalLights();
-    //application.AddTypicalCamera(core::vector3df(0.5, 0.5, -1),
-     //                            core::vector3df(0, 0.1, 0));  // to change the position of camera
-
-	application.AddTypicalCamera(core::vector3df(0.1, 0.15, 0.1),
-		core::vector3df(0, 0.04, 0));  // to change the position of camera
+   
+	application.AddTypicalCamera(core::vector3df(0.05, 0.1, 0.25),
+		core::vector3df(0, 0, 0.05));  // to change the position of camera
    
 	// Floor for simulation perspective
 	auto floorBody = std::make_shared<ChBodyEasyBox>(0.5, 0.01, 0.5,  // x, y, z dimensions
@@ -68,7 +66,7 @@ int main(int argc, char* argv[]) {
 		true,      // no contact geometry
 		true        // enable visualization geometry
 		);
-	floorBody->SetPos(ChVector<>(0, -0.02, 0.0));
+	floorBody->SetPos(ChVector<>(0, -0.04, 0.0));
 	floorBody->SetBodyFixed(true);
 
     mphysicalSystem.Add(floorBody);
@@ -128,8 +126,14 @@ int main(int argc, char* argv[]) {
 	auto marker_leftOuterKnuckle = std::make_shared<ChMarker>();
 	marker_leftOuterKnuckle->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0316910442266543, 0, -0.001933963757246050), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftOuterKnuckle->AddMarker(marker_leftOuterKnuckle);
-	
-	
+
+	leftOuterKnuckle->GetCollisionModel()->ClearModel();
+	leftOuterKnuckle->GetCollisionModel()->AddBox(0.014, 0.02, 0.004, ChVector<>(0.0306011444260539 + 0.019, 0, 0.0627920162695395), ChQuaternion<>(1, 0, 0, 0));
+	leftOuterKnuckle->GetCollisionModel()->BuildModel();
+	leftOuterKnuckle->SetCollide(true);
+	leftOuterKnuckle->GetMaterialSurfaceNSC()->SetFriction(0.2f);
+
+
 	//////////////////////////
 	//  Left Inner Knuckle  //
 	//////////////////////////
@@ -143,7 +147,7 @@ int main(int argc, char* argv[]) {
 	auto leftInnerKnuckle_mesh = chrono_types::make_shared<ChObjShapeFile>();
 	leftInnerKnuckle_mesh->SetFilename(GetChronoDataFile("../../gripper_geometry/inner_knuckle_fine.obj"));
 	leftInnerKnuckle->AddAsset(leftInnerKnuckle_mesh);
-	//mphysicalSystem.AddBody(leftInnerKnuckle);
+	mphysicalSystem.AddBody(leftInnerKnuckle);
 
 	auto marker_leftInnerKnuckle = std::make_shared<ChMarker>();
 	marker_leftInnerKnuckle->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
@@ -185,6 +189,12 @@ int main(int argc, char* argv[]) {
 	marker_leftOuterFinger_Assumed->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0.0652 - .06229, 0, 0.1086 - 0.06089), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftOuterFinger->AddMarker(marker_leftOuterFinger_Assumed);
 
+	leftOuterFinger->GetCollisionModel()->ClearModel();
+	leftOuterFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(0.034585310861294 + 0.0127000000001501 + 0.018, 0.00, 0.0454970193817975 + 0.0693074999999639 - 0.03), ChQuaternion<>(1, 0, 0, 0));
+	leftOuterFinger->GetCollisionModel()->BuildModel();
+	leftOuterFinger->SetCollide(true);
+	leftOuterFinger->GetMaterialSurfaceNSC()->SetFriction(0.2f);
+
 	
 
 	//////////////////////////
@@ -202,13 +212,16 @@ int main(int argc, char* argv[]) {
 	//leftInnerFinger->SetBodyFixed(true);
 	mphysicalSystem.AddBody(leftInnerFinger);
 
+
+
+
 	auto marker_leftInnerFinger = std::make_shared<ChMarker>();
 	marker_leftInnerFinger->Impose_Rel_Coord(ChCoordsys<>(ChVector<>(0, 0, 0), Q_from_AngAxis(-CH_C_PI_2, VECT_X)));
 	leftInnerFinger->AddMarker(marker_leftInnerFinger);
 
 	auto joint3left = std::make_shared<ChLinkLockRevolute>();
 	joint3left->Initialize(marker_leftInnerKnuckle_finger, marker_leftInnerFinger);
-	//mphysicalSystem.Add(joint3left);
+	mphysicalSystem.Add(joint3left);
 
 	//////// 
 
@@ -232,22 +245,23 @@ int main(int argc, char* argv[]) {
 	leftInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.000, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
 	leftInnerFinger->GetCollisionModel()->BuildModel();
 	leftInnerFinger->SetCollide(true);
-
+	leftInnerFinger->GetMaterialSurfaceNSC()->SetFriction(0.2f);
+	
 	
 	//////////////////////////
-	//   HANDLE TO GRIP     //
+	//   BLOCK TO PUSH      //
 	//////////////////////////
 
-	auto handle_mat = std::make_shared<ChMaterialSurfaceNSC>();
-	handle_mat->SetFriction(0.4f);
-	handle_mat->SetRollingFriction(0.001f);
+	auto pushing_block_mat = std::make_shared<ChMaterialSurfaceNSC>();
+	pushing_block_mat->SetFriction(0.5f);
+	pushing_block_mat->SetRollingFriction(0.001f);
 
 
-	auto handle_base_two = std::make_shared<ChBodyEasyBox>(0.05, 0.02, 0.05, 2000, false, true);
-	handle_base_two->SetPos(ChVector<>(0, 0, 0.0454970193817975 + 0.0693074999999639 + 0.018));
-	handle_base_two->SetBodyFixed(false);
-	handle_base_two->SetMaterialSurface(handle_mat);
-	//mphysicalSystem.AddBody(handle_base_two);
+	auto pushing_block = std::make_shared<ChBodyEasyBox>(0.05, 0.06, 0.05, 80, true, true);
+	pushing_block->SetPos(ChVector<>(0, 0, 0.0454970193817975 + 0.0693074999999639 + 0.020));
+	pushing_block->SetBodyFixed(false);
+	pushing_block->SetMaterialSurface(pushing_block_mat);
+	mphysicalSystem.AddBody(pushing_block);
 
 
 
@@ -283,7 +297,7 @@ int main(int argc, char* argv[]) {
 
     // Floor Color for Irrichlet Simulation
     auto color = std::make_shared<ChColorAsset>();
-    color->SetColor(ChColor(0.2f, 0.2f, 0.8f));
+    color->SetColor(ChColor(0.2f, 0.3f, 0.2f));
     floorBody->AddAsset(color);
 
 	// Gripper Colors
@@ -297,9 +311,10 @@ int main(int argc, char* argv[]) {
 	leftOuterFinger->AddAsset(gripper_gray);
 	leftInnerFinger->AddAsset(gripper_black);
 
-	// Add Color to Handle - Wisconsin Maroon!
-	auto wisc_maroon = std::make_shared<ChColorAsset>();
-	wisc_maroon->SetColor(ChColor(0.6078f, 0.0f, 0.0f));
+	// Add Color to Pushing Block - Green
+	auto block_green = std::make_shared<ChColorAsset>();
+	block_green->SetColor(ChColor(0.0f, 0.6078f, 0.0f));
+	pushing_block->AddAsset(block_green);
 	
 
     //======================================================================
@@ -321,7 +336,6 @@ int main(int argc, char* argv[]) {
     // THE SOFT-REAL-TIME CYCLE
     //
 
-    //while (application.GetDevice()->run()) {
 	long iter = 0;
 	while (application.GetDevice()->run()) {
         application.BeginScene();
@@ -329,8 +343,8 @@ int main(int argc, char* argv[]) {
         application.DrawAll();
 
         // This performs the integration timestep!
-		// Does two open and closes of the gripper
-		if (iter < 160E2) {
+		// Runs for a limited period of time then stops doing integration
+		if (iter < 320E2) {
 			application.DoStep();
 		}
         application.EndScene();

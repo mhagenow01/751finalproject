@@ -28,6 +28,4 @@ Additionally, since the project uses some relative paths, please follow the belo
  ![Intended File Structure](/media/example_file_structure.PNG?raw=true "Project File Structure")
 
 ## Running the simulations
-Once the files have been build, this repository contains 4 exes that can be run alone that include irrchlet visualization (gripper_kinematics, gripper_friction_test_comp, gripper_complementarity_friction, gripper_penalty_friction).
-
-placeholder text
+Once the files have been build, this repository contains 4 exes that can be run alone that include irrlicht visualization (gripper_kinematics, gripper_friction_test_comp, gripper_complementarity_friction, gripper_penalty_friction).
