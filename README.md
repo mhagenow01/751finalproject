@@ -23,7 +23,8 @@ Additionally, since the project uses some relative paths, please follow the belo
 * Chrono should be placed in the root directory of the github repository (i.e., at the same level as the gripper_slip_simulations directory)
 * Chrono is configured to build all files into the 'build' directory in the root
 * gripper_slip_simulations contains a CMakeLists that can also be used through CMake to build the gripper simulation files. I did all testing with Visual Studio 2017. It was tested one two separate machines.
- When I tested, the executables were built to the build/Release/ directory (provided you compile with Release).
+
+When I tested, the executables were built to the build/Release/ directory (provided you compile with Release).
  
  ![Intended File Structure](/media/example_file_structure.PNG?raw=true "Project File Structure")
 
@@ -36,6 +37,7 @@ In order to create the plots in the report, there are bash scripts in the /scrip
 and plot the contact forces from one of the gripper fingers.
 * run_complementarity.bash
 * run_penalty.bash
+
 These scripts will run the chrono simulation, save the data to a file, and then plot the data in python. It is important these are run from the scripts directory
 as they rely on relative paths.
 
