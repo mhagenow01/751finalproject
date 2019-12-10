@@ -56,11 +56,10 @@ int main(int argc, char* argv[]) {
     application.AddTypicalLogo();
     application.AddTypicalSky();
     application.AddTypicalLights();
-    //application.AddTypicalCamera(core::vector3df(0.5, 0.5, -1),
-     //                            core::vector3df(0, 0.1, 0));  // to change the position of camera
 
-	application.AddTypicalCamera(core::vector3df(0.1, 0.15, 0.1),
-		core::vector3df(0, 0.04, 0));  // to change the position of camera
+
+	application.AddTypicalCamera(core::vector3df(0.04, 0.15, 0.2),
+		core::vector3df(0, 0.04, 0.04));  // to change the position of camera
    
 	// Floor for simulation perspective
 	auto floorBody = std::make_shared<ChBodyEasyBox>(0.5, 0.01, 0.5,  // x, y, z dimensions
@@ -305,9 +304,12 @@ int main(int argc, char* argv[]) {
 	// Collision Information for the Gripper
 	// information provided in http://api.projectchrono.org/collision_shapes.html
 	leftInnerFinger->GetCollisionModel()->ClearModel();
-	leftInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.004, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
+	leftInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.000, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
 	leftInnerFinger->GetCollisionModel()->BuildModel();
 	leftInnerFinger->SetCollide(true);
+	leftInnerFinger->GetMaterialSurfaceSMC()->SetFriction(0.2f);
+	leftInnerFinger->GetMaterialSurfaceSMC()->SetRestitution(0.1f);
+	leftInnerFinger->GetMaterialSurfaceSMC()->SetAdhesion(0.0f);
 
 	//////////////////////////
 	//  Right Inner Finger   //
@@ -346,9 +348,12 @@ int main(int argc, char* argv[]) {
 	// Collision Information for the Gripper
 	// information provided in http://api.projectchrono.org/collision_shapes.html
 	rightInnerFinger->GetCollisionModel()->ClearModel();
-	rightInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.004, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
+	rightInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.000, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
 	rightInnerFinger->GetCollisionModel()->BuildModel();
 	rightInnerFinger->SetCollide(true);
+	rightInnerFinger->GetMaterialSurfaceSMC()->SetFriction(0.2f);
+	rightInnerFinger->GetMaterialSurfaceSMC()->SetRestitution(0.1f);
+	rightInnerFinger->GetMaterialSurfaceSMC()->SetAdhesion(0.0f);
 
 	
 	//////////////////////////
@@ -359,6 +364,14 @@ int main(int argc, char* argv[]) {
 	handle->SetPos(ChVector<>(0, 0, 0.0454970193817975 + 0.0693074999999639 - 0.09+0.018));
 	//handle->SetBodyFixed(true);
 	mphysicalSystem.AddBody(handle);
+
+	auto handle_material = std::make_shared<ChMaterialSurfaceSMC>();
+	handle_material->SetFriction(0.2f);
+	handle_material->SetRestitution(0.05f);
+	handle_material->SetAdhesion(0.0f);
+	handle->SetMaterialSurface(handle_material);
+
+
 
 	auto handle_base_two = std::make_shared<ChBodyEasyBox>(0.05, 0.02, 0.05, 2700, true, true);
 	handle_base_two->SetPos(ChVector<>(0, -0.07, 0.0454970193817975 + 0.0693074999999639 - 0.09 + 0.018));
@@ -388,52 +401,65 @@ int main(int argc, char* argv[]) {
 	handleJoint->Initialize(handle, handle_base);
 	mphysicalSystem.Add(handleJoint);
 
-
-
-
 	//////////////////////////
 	//     DRIVING CODE     //
 	//////////////////////////
 
-	class ChFunction_PartialSine : public ChFunction {
-	// Custom function for kinematics - created with help from the ChFunctions tutorial
+	class ChFunction_CylinderTurner : public ChFunction {
+		// Custom function for moving the cylinder (basic state machine) - created with help from the ChFunctions tutorial
 	public:
-		virtual ChFunction_PartialSine* Clone() const override { return new ChFunction_PartialSine(); }
+		virtual ChFunction_CylinderTurner* Clone() const override { return new ChFunction_CylinderTurner(); }
 
-		virtual double Get_y(double x) const override { return abs((CH_C_PI / 6)*sin((4)*x)); }  // just for test: simple cosine
+		virtual double Get_y(double x) const override {
+			if (x < 0.1) {
+				return 0; // don't move at the beginning
+			}
+
+			if (x > 0.6) {
+				return 5 * (0.6 - 0.1); // don't move at the end
+			}
+
+			return 5 * (x - 0.1);
+		}  // otherwise, rotate at a fixed rate
 	};
 
-	auto gripperDriver = std::make_shared<ChFunction_PartialSine>();
+	auto cylinderDriver = std::make_shared<ChFunction_CylinderTurner>();
 
 
-
-
-
-
-	auto slip_grip_torque = std::make_shared<ChFunction_Const>(0.1); // 0.5 Nm (soft grip) -> Gripper can provide maximum of 3 Nm
+	auto slip_grip_torque = std::make_shared<ChFunction_Const>(0.5); // 0.5 Nm (soft grip) -> Gripper can provide maximum of 3 Nm
 
 	///////////////////////////////////
 	//     Left Motor - Torque       //
 	///////////////////////////////////
 
 	auto left_motor = chrono_types::make_shared<ChLinkMotorRotationTorque>();
-	left_motor->Initialize(gripperBase, leftOuterKnuckle, ChFrame<>(ChVector<>(0.0306011444260539, 0, 0.0627920162695395-.09), Q_from_AngAxis(-CH_C_PI_2, VECT_X))); //
+	left_motor->Initialize(gripperBase, leftOuterKnuckle, ChFrame<>(ChVector<>(0.0306011444260539, 0, 0.0627920162695395 - .09), Q_from_AngAxis(-CH_C_PI_2, VECT_X))); //
 	left_motor->SetName("RotationalMotor");
 	left_motor->SetMotorFunction(slip_grip_torque);
 
 	mphysicalSystem.AddLink(left_motor);
-	
+
 	//////////////////////////
 	//     Right Motor       //
 	//////////////////////////
 
 	auto right_motor = chrono_types::make_shared<ChLinkMotorRotationTorque>();
-	right_motor->Initialize(gripperBase, rightOuterKnuckle, ChFrame<>(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395-0.09), Q_from_AngAxis(CH_C_PI_2, VECT_X))); //
+	right_motor->Initialize(gripperBase, rightOuterKnuckle, ChFrame<>(ChVector<>(-0.0306011444260539, 0, 0.0627920162695395 - 0.09), Q_from_AngAxis(CH_C_PI_2, VECT_X))); //
 	right_motor->SetName("RotationalMotor");
 	right_motor->SetMotorFunction(slip_grip_torque);
 
 	mphysicalSystem.AddLink(right_motor);
 
+	//////////////////////////
+	//     Drive Cylinder   //
+	//////////////////////////
+	auto cylinder_motor = chrono_types::make_shared<ChLinkMotorRotationAngle>();
+	cylinder_motor->Initialize(handle_base_two, handle_base, ChFrame<>(ChVector<>(0, -0.05, 0.0454970193817975 + 0.0693074999999639 - 0.09 + 0.018), Q_from_AngAxis(-CH_C_PI_2, VECT_X))); //
+	cylinder_motor->SetName("Cylinder Rotater");
+	cylinder_motor->SetMotorFunction(cylinderDriver);
+
+	mphysicalSystem.AddLink(cylinder_motor);
+	
 	/////////////////////////////////////////////
 	// Lock the fingers - Uncomment if desired //
 	//leftOuterKnuckle->SetBodyFixed(true);
@@ -451,25 +477,25 @@ int main(int argc, char* argv[]) {
     floorBody->AddAsset(color);
 
 	// Gripper Colors
-	auto gripper_gray = std::make_shared<ChColorAsset>();
-	gripper_gray->SetColor(ChColor(0.2f, 0.2f, 0.2f));
+	auto gripper_blue = std::make_shared<ChColorAsset>();
+	gripper_blue->SetColor(ChColor(0.2f, 0.2f, 0.5f));
 	auto gripper_black = std::make_shared<ChColorAsset>();
 	gripper_black->SetColor(ChColor(0.1f, 0.1f, 0.1f));
-	gripperBase->AddAsset(gripper_gray);
-	leftInnerKnuckle->AddAsset(gripper_gray);
-	rightInnerKnuckle->AddAsset(gripper_gray);
-	leftOuterKnuckle->AddAsset(gripper_gray);
-	rightOuterKnuckle->AddAsset(gripper_gray);
-	leftOuterFinger->AddAsset(gripper_gray);
-	rightOuterFinger->AddAsset(gripper_gray);
+	gripperBase->AddAsset(gripper_blue);
+	leftInnerKnuckle->AddAsset(gripper_blue);
+	rightInnerKnuckle->AddAsset(gripper_blue);
+	leftOuterKnuckle->AddAsset(gripper_blue);
+	rightOuterKnuckle->AddAsset(gripper_blue);
+	leftOuterFinger->AddAsset(gripper_blue);
+	rightOuterFinger->AddAsset(gripper_blue);
 	leftInnerFinger->AddAsset(gripper_black);
 	rightInnerFinger->AddAsset(gripper_black);
 
 	// Add Color to Handle - Wisconsin Maroon!
-	auto wisc_maroon = std::make_shared<ChColorAsset>();
-	wisc_maroon->SetColor(ChColor(0.6078f, 0.0f, 0.0f));
-	handle->AddAsset(wisc_maroon);
-	handle_base->AddAsset(wisc_maroon);
+	auto blue = std::make_shared<ChColorAsset>();
+	blue->SetColor(ChColor(0.0f, 0.0f, 0.6078f));
+	handle->AddAsset(blue);
+	handle_base->AddAsset(blue);
 
     //======================================================================
 	//           Creates the Simulation through Irrich                    //
@@ -483,7 +509,7 @@ int main(int argc, char* argv[]) {
     application.AssetUpdateAll();
 
     // Adjust some settings:
-    application.SetTimestep(0.00001);
+    application.SetTimestep(0.0001);
     application.SetTryRealtime(false);
 
     //
