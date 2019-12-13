@@ -11,6 +11,7 @@
 // =============================================================================
 //  Modified by Mike Hagenow 11-28-19
 //  Used to create the Robotiq gripper geometry that is used in Simulation
+//  The simulation uses a custom driving function to move the gripper in and out.
 // =============================================================================
 
 #include "chrono/physics/ChSystemNSC.h"

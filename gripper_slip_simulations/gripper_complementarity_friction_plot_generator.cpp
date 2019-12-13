@@ -9,8 +9,10 @@
 // http://projectchrono.org/license-chrono.txt.
 //
 // =============================================================================
-//  Modified by Mike Hagenow 11-28-19
-//  Used to create the Robotiq gripper geometry that is used in Simulation
+//  Complementarity Method Plot Generator
+//  This file runs the complementarity method of friction for a cylinder grasp
+//  by the gripper and then exports the contact forces from one gripper finger
+//  to a text file that is picked up by python
 // =============================================================================
 
 #include "chrono/physics/ChSystemNSC.h"
@@ -36,7 +38,7 @@ int main(int argc, char* argv[]) {
     // Set path to Chrono data directory
     SetChronoDataPath(CHRONO_DATA_DIR);
     
-    // Create a Chrono physical system
+    // Create a Chrono physical system - Complementarity Method
     ChSystemNSC mphysicalSystem;
 	collision::ChCollisionModel::SetDefaultSuggestedEnvelope(0.00001);
 	collision::ChCollisionModel::SetDefaultSuggestedMargin(0.000005);
@@ -278,6 +280,8 @@ int main(int argc, char* argv[]) {
 	leftInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.000, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
 	leftInnerFinger->GetCollisionModel()->BuildModel();
 	leftInnerFinger->SetCollide(true);
+
+	//Choose a moderate level of friction
 	leftInnerFinger->GetMaterialSurfaceNSC()->SetFriction(0.2f);
 
 	//////////////////////////
@@ -320,6 +324,8 @@ int main(int argc, char* argv[]) {
 	rightInnerFinger->GetCollisionModel()->AddBox(0.008, 0.02, 0.035, ChVector<>(-0.000, 0, 0.025), ChQuaternion<>(1, 0, 0, 0));
 	rightInnerFinger->GetCollisionModel()->BuildModel();
 	rightInnerFinger->SetCollide(true);
+
+	//Choose a moderate level of friction
 	rightInnerFinger->GetMaterialSurfaceNSC()->SetFriction(0.2f);
 
 	
@@ -436,9 +442,11 @@ int main(int argc, char* argv[]) {
 		// Chrono advances the state of the system via time integration
 		// with a time step of 0.02
 		mphysicalSystem.DoStepDynamics(0.0002);
+
+		// Logs to Chrono and to the file
 		GetLog() << rightInnerFinger->GetContactForce()<< "\n";
 		file_output << rightInnerFinger->GetContactForce() << "\n";
-		// Draw items on screen (lines, circles, etc.) or dump data to disk 
+	
 		
 	}
 

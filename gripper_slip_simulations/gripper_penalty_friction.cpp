@@ -9,8 +9,9 @@
 // http://projectchrono.org/license-chrono.txt.
 //
 // =============================================================================
-//  Modified by Mike Hagenow 11-28-19
-//  Used to create the Robotiq gripper geometry that is used in Simulation
+//  Penalty Method Plot Generator
+//  This file runs the penalty method of friction for a cylinder grasp
+//  by the gripper and then visualizes for verification
 // =============================================================================
 
 #include "chrono/physics/ChSystemNSC.h"

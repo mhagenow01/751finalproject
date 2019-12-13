@@ -9,8 +9,9 @@
 // http://projectchrono.org/license-chrono.txt.
 //
 // =============================================================================
-//  Modified by Mike Hagenow 11-28-19
-//  Used to create the Robotiq gripper geometry that is used in Simulation
+// Modified by mhagenow
+// Playground for testing effects of friction and collision parameters
+// One half of the gripper interacts with a block on a table
 // =============================================================================
 
 #include "chrono/physics/ChSystemNSC.h"
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
     // Set path to Chrono data directory
     SetChronoDataPath(CHRONO_DATA_DIR);
     
-    // Create a Chrono physical system
+    // Create a Chrono physical system - complementarity
     ChSystemNSC mphysicalSystem;
 	collision::ChCollisionModel::SetDefaultSuggestedEnvelope(0.001);
 	collision::ChCollisionModel::SetDefaultSuggestedMargin(0.0005);
@@ -78,6 +79,9 @@ int main(int argc, char* argv[]) {
 	//======================================================================
 	// The gripper model comes from the Robotiq Two-Finger 85 Model.
 	// This mechanism consists of 9 links supported by 8 joints
+	// For this case, only half of the gripper is modeled to test the interaction
+
+
 	// The geometry is defined below and was derived in terms of geometric
 	// primitives based on the following:
 	// https://github.com/a-price/robotiq_arg85_description/blob/master/robots/robotiq_arg85_description.URDF
