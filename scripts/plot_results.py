@@ -1,3 +1,8 @@
+##########################################################
+# Author: Mike Hagenow                                   #
+# Simple script for plotting data extracted from Chrono  #
+##########################################################
+
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -7,6 +12,8 @@ def plot_contact_forces(name,datafile):
     print(name)
     print(np.shape(data))
     plt.figure()
+	
+	# Plots the three directions of Chrono contact forces using subplots
     plt.subplot(3,1,1)
     plt.title(name + ' Contact Forces During Cylinder Grip')
     plt.plot(data[:,0])
@@ -22,4 +29,5 @@ def plot_contact_forces(name,datafile):
 	
 		
 if __name__ == '__main__':
+	# Name is either "Complementarity" or "Penalty"
     plot_contact_forces(sys.argv[1],sys.argv[2]) # Name of plot and file passed via CLAs
